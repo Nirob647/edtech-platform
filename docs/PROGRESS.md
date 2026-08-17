@@ -8,6 +8,8 @@ Read this file first in any new session. Then read DECISIONS.md.
 - [x] DB schema (Phase: CORE) — 0001_core.sql + 0002 fix run successfully, RLS enabled
 - [x] Auth (register/login/logout, roles) — tested working end-to-end
 - [x] Netlify deploy (frontend) — LIVE, tested working
+- [x] Admin panel: Subjects CRUD — tested working locally + live
+- [x] Fixed: Supabase default SMTP 2-emails/hour limit — disabled email confirmation for now (TODO: revisit with working custom SMTP before real 50-student launch)
 - [ ] RLS policies
 - [ ] Subjects/Topics CRUD (admin)
 - [ ] Question bank CRUD (admin)

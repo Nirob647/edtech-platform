@@ -7,6 +7,7 @@ export default function AdminHome() {
       <h2>Admin Panel</h2>
       <ul>
         <li><Link to="/admin/subjects">Subjects</Link></li>
+        <li><Link to="/admin/questions">Question Bank</Link></li>
       </ul>
     </div>
   )

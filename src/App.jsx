@@ -4,6 +4,7 @@ import Register from './pages/auth/Register'
 import Dashboard from './pages/student/Dashboard'
 import AdminHome from './pages/admin/AdminHome'
 import Subjects from './pages/admin/Subjects'
+import QuestionBank from './pages/admin/QuestionBank'
 import { useAuth } from './hooks/useAuth'
 
 function ProtectedRoute({ children }) {
@@ -49,6 +50,14 @@ export default function App() {
           element={
             <AdminRoute>
               <Subjects />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/questions"
+          element={
+            <AdminRoute>
+              <QuestionBank />
             </AdminRoute>
           }
         />
