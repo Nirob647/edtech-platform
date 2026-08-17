@@ -4,8 +4,8 @@ Read this file first in any new session. Then read DECISIONS.md.
 
 ## Phase status
 - [x] Repo scaffold (React+Vite, folder structure, docs)
-- [ ] Supabase project created
-- [ ] DB schema (Phase: CORE)
+- [x] Supabase project created (fkqebfmaypmbmimnevmd)
+- [x] DB schema (Phase: CORE) — 0001_core.sql run successfully, RLS enabled
 - [ ] Auth (register/login/logout, roles)
 - [ ] RLS policies
 - [ ] Subjects/Topics CRUD (admin)
