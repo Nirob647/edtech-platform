@@ -5,8 +5,9 @@ Read this file first in any new session. Then read DECISIONS.md.
 ## Phase status
 - [x] Repo scaffold (React+Vite, folder structure, docs)
 - [x] Supabase project created (fkqebfmaypmbmimnevmd)
-- [x] DB schema (Phase: CORE) — 0001_core.sql run successfully, RLS enabled
-- [ ] Auth (register/login/logout, roles)
+- [x] DB schema (Phase: CORE) — 0001_core.sql + 0002 fix run successfully, RLS enabled
+- [x] Auth (register/login/logout, roles) — tested working end-to-end
+- [x] Netlify deploy (frontend) — LIVE, tested working
 - [ ] RLS policies
 - [ ] Subjects/Topics CRUD (admin)
 - [ ] Question bank CRUD (admin)

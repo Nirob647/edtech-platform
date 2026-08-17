@@ -2,12 +2,22 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import Dashboard from './pages/student/Dashboard'
+import AdminHome from './pages/admin/AdminHome'
+import Subjects from './pages/admin/Subjects'
 import { useAuth } from './hooks/useAuth'
 
 function ProtectedRoute({ children }) {
   const { session, loading } = useAuth()
   if (loading) return <p>Loading...</p>
   if (!session) return <Navigate to="/login" replace />
+  return children
+}
+
+function AdminRoute({ children }) {
+  const { session, loading, isAdmin } = useAuth()
+  if (loading) return <p>Loading...</p>
+  if (!session) return <Navigate to="/login" replace />
+  if (!isAdmin) return <Navigate to="/dashboard" replace />
   return children
 }
 
@@ -24,6 +34,22 @@ export default function App() {
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminHome />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/subjects"
+          element={
+            <AdminRoute>
+              <Subjects />
+            </AdminRoute>
           }
         />
       </Routes>
