@@ -25,3 +25,7 @@ src/{components,pages,modules,services,hooks,utils,types,config}
 ## Open questions (resolve before relevant phase)
 - Exact roles table design (roles table vs enum on profiles) — decide at CORE phase.
 - Whether question_options is a separate table or JSON column on questions — decide at CORE phase (spec implies separate table, section 8).
+
+## 2026-08-17 — Known limitations to revisit before real 50-student launch
+- Grading happens client-side (browser computes score, writes result). A technically savvy student could inspect network responses to see correct answers before submitting, or tamper with submitted score. Acceptable for an internal/trusted pilot; before real high-stakes launch, move grading into a Supabase Edge Function so correct answers never reach the browser during an active attempt.
+- Email confirmation is disabled (custom SMTP setup hit timeouts) — no verification that registered emails are real. Revisit with a working SMTP provider, or add admin-approval-of-new-students as a lightweight safeguard.

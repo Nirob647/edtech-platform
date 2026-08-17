@@ -9,16 +9,14 @@ Read this file first in any new session. Then read DECISIONS.md.
 - [x] Auth (register/login/logout, roles) — tested working end-to-end
 - [x] Netlify deploy (frontend) — LIVE, tested working
 - [x] Admin panel: Subjects CRUD — tested working locally + live
+- [x] Admin panel: Topics + Question Bank (MCQ with 4 options, draft/publish) — tested working locally
+- [x] Exam builder: create exam, configure rules, attach published questions, publish — tested working locally + live
 - [x] Fixed: Supabase default SMTP 2-emails/hour limit — disabled email confirmation for now (TODO: revisit with working custom SMTP before real 50-student launch)
-- [ ] RLS policies
-- [ ] Subjects/Topics CRUD (admin)
-- [ ] Question bank CRUD (admin)
-- [ ] Exam builder (admin)
-- [ ] Exam attempt flow (student) — server-side timer
-- [ ] Auto-evaluation + results
-- [ ] Student dashboard (available/upcoming/completed exams, results)
+- [x] RLS policies (part of 0001_core.sql)
+- [x] Exam attempt flow (student) — server-side expires_at, resume-on-refresh, auto-submit on timeout
+- [x] Auto-evaluation + results — CLIENT-SIDE grading (see known limitation in DECISIONS.md)
+- [x] Student dashboard: exam list (available/in-progress/completed), take exam, view result
 - [ ] Basic export/backup script
-- [ ] Netlify deploy (frontend)
 - [ ] Phase: AI (PDF extract, MCQ gen, translation, review queue)
 - [ ] Phase: Courses/Books/Notifications
 - [ ] Phase: Written exams

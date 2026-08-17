@@ -8,6 +8,7 @@ export default function AdminHome() {
       <ul>
         <li><Link to="/admin/subjects">Subjects</Link></li>
         <li><Link to="/admin/questions">Question Bank</Link></li>
+        <li><Link to="/admin/exams">Exams</Link></li>
       </ul>
     </div>
   )
