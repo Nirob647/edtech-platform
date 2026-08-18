@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { listSubjects, createSubject, updateSubject, deleteSubject } from '../../modules/questions/subjectsService'
-import { Link } from 'react-router-dom'
 
 export default function Subjects() {
   const [subjects, setSubjects] = useState([])
@@ -12,13 +11,9 @@ export default function Subjects() {
 
   async function refresh() {
     setLoading(true)
-    try {
-      setSubjects(await listSubjects())
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+    try { setSubjects(await listSubjects()) }
+    catch (err) { setError(err.message) }
+    finally { setLoading(false) }
   }
 
   useEffect(() => { refresh() }, [])
@@ -27,16 +22,11 @@ export default function Subjects() {
     e.preventDefault()
     setError('')
     try {
-      if (editingId) {
-        await updateSubject(editingId, { name, description })
-      } else {
-        await createSubject({ name, description })
-      }
+      if (editingId) await updateSubject(editingId, { name, description })
+      else await createSubject({ name, description })
       setName(''); setDescription(''); setEditingId(null)
       refresh()
-    } catch (err) {
-      setError(err.message)
-    }
+    } catch (err) { setError(err.message) }
   }
 
   function startEdit(s) {
@@ -47,46 +37,46 @@ export default function Subjects() {
 
   async function handleDelete(id) {
     if (!confirm('Delete this subject? This may fail if questions/exams reference it.')) return
-    try {
-      await deleteSubject(id)
-      refresh()
-    } catch (err) {
-      setError(err.message)
-    }
+    try { await deleteSubject(id); refresh() }
+    catch (err) { setError(err.message) }
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'sans-serif' }}>
-      <p><Link to="/admin">&larr; Admin Dashboard</Link></p>
-      <h2>Subjects</h2>
+    <div className="page">
+      <h1>Subjects</h1>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 24, border: '1px solid #ccc', padding: 16 }}>
-        <input placeholder="Subject name" value={name} onChange={e => setName(e.target.value)} required style={inputStyle} />
-        <textarea placeholder="Description (optional)" value={description} onChange={e => setDescription(e.target.value)} style={inputStyle} />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">{editingId ? 'Update' : 'Create'} Subject</button>
-        {editingId && <button type="button" onClick={() => { setEditingId(null); setName(''); setDescription('') }} style={{ marginLeft: 8 }}>Cancel</button>}
-      </form>
+      <div className="card">
+        <h3>{editingId ? 'Edit subject' : 'Add a subject'}</h3>
+        <form onSubmit={handleSubmit}>
+          <label className="field">Name
+            <input placeholder="e.g. Contract Law" value={name} onChange={e => setName(e.target.value)} required />
+          </label>
+          <label className="field">Description
+            <textarea placeholder="Optional" value={description} onChange={e => setDescription(e.target.value)} />
+          </label>
+          {error && <p className="error-text">{error}</p>}
+          <button type="submit">{editingId ? 'Update' : 'Create'} Subject</button>
+          {editingId && <button type="button" className="btn-secondary" onClick={() => { setEditingId(null); setName(''); setDescription('') }} style={{ marginLeft: 8 }}>Cancel</button>}
+        </form>
+      </div>
 
-      {loading ? <p>Loading...</p> : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+      {loading ? <p className="muted">Loading…</p> : (
+        <div className="card">
           {subjects.map(s => (
-            <li key={s.id} style={{ border: '1px solid #ddd', padding: 12, marginBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
+            <div key={s.id} className="list-item">
               <div>
                 <strong>{s.name}</strong>
-                {s.description && <p style={{ margin: '4px 0 0', color: '#666' }}>{s.description}</p>}
+                {s.description && <p className="muted" style={{ margin: '4px 0 0' }}>{s.description}</p>}
               </div>
-              <div>
-                <button onClick={() => startEdit(s)}>Edit</button>
-                <button onClick={() => handleDelete(s.id)} style={{ marginLeft: 8 }}>Delete</button>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button className="btn-secondary" onClick={() => startEdit(s)}>Edit</button>
+                <button className="btn-danger" onClick={() => handleDelete(s.id)}>Delete</button>
               </div>
-            </li>
+            </div>
           ))}
-          {subjects.length === 0 && <p>No subjects yet. Create one above.</p>}
-        </ul>
+          {subjects.length === 0 && <p className="muted">No subjects yet — add one above.</p>}
+        </div>
       )}
     </div>
   )
 }
-
-const inputStyle = { display: 'block', width: '100%', padding: 8, marginBottom: 10 }

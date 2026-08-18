@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   getExamWithQuestions, getMyAttempts, startAttempt, getMyAnswers,
   saveAnswer, submitAttempt, autoSubmitExpired,
@@ -11,7 +11,7 @@ export default function TakeExam() {
   const [exam, setExam] = useState(null)
   const [examQuestions, setExamQuestions] = useState([])
   const [attempt, setAttempt] = useState(null)
-  const [answers, setAnswers] = useState({}) // questionId -> optionId
+  const [answers, setAnswers] = useState({})
   const [remainingSeconds, setRemainingSeconds] = useState(null)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -27,18 +27,13 @@ export default function TakeExam() {
         const myAttempts = await getMyAttempts(examId)
         let current = myAttempts.find(a => a.status === 'in_progress')
 
-        // If we found an in-progress attempt but its timer already expired
-        // (e.g. from a previous short-duration test), auto-submit it and
-        // start a fresh attempt instead of getting stuck redirecting forever.
         if (current && current.expires_at && new Date(current.expires_at) <= new Date()) {
           try {
             const staleAnswers = await getMyAnswers(current.id)
             const staleMap = {}
             staleAnswers.forEach(a => { staleMap[a.question_id] = a.selected_option_id })
             await autoSubmitExpired(current.id, exam, examQuestions, staleMap)
-          } catch (e) {
-            // even if grading the stale attempt fails, don't block a fresh start
-          }
+          } catch (e) { /* proceed to fresh attempt regardless */ }
           current = null
         }
 
@@ -58,7 +53,6 @@ export default function TakeExam() {
     init()
   }, [examId])
 
-  // Server-tracked countdown: recalculated from expires_at, survives refresh
   useEffect(() => {
     if (!attempt?.expires_at) return
     function tick() {
@@ -103,48 +97,57 @@ export default function TakeExam() {
     }
   }
 
-  if (error) return <p style={{ color: 'red', maxWidth: 700, margin: '40px auto' }}>{error}</p>
-  if (!exam || !attempt) return <p>Loading...</p>
+  if (error) return <div className="page"><p className="error-text">{error}</p></div>
+  if (!exam || !attempt) return <div className="page"><p>Loading…</p></div>
 
   const answeredCount = Object.keys(answers).length
+  const lowTime = remainingSeconds !== null && remainingSeconds < 60
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'sans-serif' }}>
-      <p><Link to="/exams">&larr; Exams</Link></p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>{exam.title}</h2>
-        {remainingSeconds !== null && (
-          <div style={{ fontWeight: 'bold', color: remainingSeconds < 60 ? 'red' : 'inherit' }}>
-            {formatTime(remainingSeconds)}
+    <div className="page">
+      <div style={{ position: 'sticky', top: 0, background: 'var(--paper)', paddingBottom: 14, zIndex: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <h2 style={{ marginBottom: 2 }}>{exam.title}</h2>
+            <p className="muted" style={{ margin: 0 }}>{answeredCount} / {examQuestions.length} answered</p>
           </div>
-        )}
+          {remainingSeconds !== null && (
+            <div className={`exam-clock ${lowTime ? 'low-time' : ''}`}>{formatTime(remainingSeconds)}</div>
+          )}
+        </div>
       </div>
-      <p>{answeredCount} / {examQuestions.length} answered</p>
 
       {examQuestions.map((eq, idx) => {
         const q = eq.questions
+        const selected = answers[q.id]
         return (
-          <div key={q.id} style={{ border: '1px solid #ddd', padding: 14, marginBottom: 12 }}>
-            <p><strong>Q{idx + 1}.</strong> {q.question_text}</p>
+          <div key={q.id} className="card">
+            <div style={{ display: 'flex', marginBottom: 12 }}>
+              <span className="question-number">{idx + 1}</span>
+              <p style={{ margin: 0, paddingTop: 6 }}><strong>{q.question_text}</strong></p>
+            </div>
             {q.question_options.map(o => (
-              <label key={o.id} style={{ display: 'block', padding: '4px 0' }}>
+              <label
+                key={o.id}
+                className={`bubble-option ${selected === o.id ? 'selected' : ''}`}
+              >
                 <input
                   type="radio"
                   name={`q-${q.id}`}
-                  checked={answers[q.id] === o.id}
+                  checked={selected === o.id}
                   onChange={() => handleSelect(q.id, o.id)}
-                  disabled={exam.answer_change_allowed === false && !!answers[q.id] && answers[q.id] !== o.id}
-                  style={{ marginRight: 8 }}
+                  disabled={exam.answer_change_allowed === false && !!selected && selected !== o.id}
                 />
-                {o.option_label}. {o.option_text}
+                <span className="bubble">{o.option_label}</span>
+                <span>{o.option_text}</span>
               </label>
             ))}
           </div>
         )
       })}
 
-      <button onClick={handleSubmit} disabled={submitting} style={{ padding: '10px 20px' }}>
-        {submitting ? 'Submitting...' : 'Submit Exam'}
+      <button onClick={handleSubmit} disabled={submitting} style={{ padding: '12px 24px', fontSize: '1rem' }}>
+        {submitting ? 'Submitting…' : 'Submit Exam'}
       </button>
     </div>
   )

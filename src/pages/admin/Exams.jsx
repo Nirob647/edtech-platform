@@ -36,39 +36,46 @@ export default function Exams() {
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'sans-serif' }}>
-      <p><Link to="/admin">&larr; Admin Dashboard</Link></p>
-      <h2>Exams</h2>
+    <div className="page">
+      <h1>Exams</h1>
 
-      <form onSubmit={handleCreate} style={{ border: '1px solid #ccc', padding: 16, marginBottom: 24 }}>
-        <h3>Create Exam</h3>
-        <input placeholder="Exam title" value={title} onChange={e => setTitle(e.target.value)} required style={inputStyle} />
-        <select value={subjectId} onChange={e => setSubjectId(e.target.value)} style={inputStyle}>
-          <option value="">-- select subject (optional) --</option>
-          {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
-        <textarea placeholder="Description (optional)" value={description} onChange={e => setDescription(e.target.value)} style={inputStyle} />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Create & Configure</button>
-      </form>
+      <div className="card">
+        <h3>Create an exam</h3>
+        <form onSubmit={handleCreate}>
+          <label className="field">Title
+            <input value={title} onChange={e => setTitle(e.target.value)} required />
+          </label>
+          <label className="field">Subject
+            <select value={subjectId} onChange={e => setSubjectId(e.target.value)}>
+              <option value="">-- select subject (optional) --</option>
+              {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </label>
+          <label className="field">Description
+            <textarea value={description} onChange={e => setDescription(e.target.value)} />
+          </label>
+          {error && <p className="error-text">{error}</p>}
+          <button type="submit">Create & Configure</button>
+        </form>
+      </div>
 
-      <h3>All Exams</h3>
-      {exams.map(ex => (
-        <div key={ex.id} style={{ border: '1px solid #ddd', padding: 12, marginBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
-          <div>
-            <strong>{ex.title}</strong>{' '}
-            <span style={{ fontSize: 12, color: ex.status === 'published' ? 'green' : '#999' }}>[{ex.status}]</span>
-            <p style={{ margin: '4px 0 0', color: '#666', fontSize: 13 }}>{ex.subjects?.name || 'No subject'}</p>
+      <div className="card">
+        <h3>All exams</h3>
+        {exams.map(ex => (
+          <div key={ex.id} className="list-item">
+            <div>
+              <strong>{ex.title}</strong>{' '}
+              <span className={`seal seal-${ex.status}`}>{ex.status}</span>
+              <p className="muted" style={{ margin: '4px 0 0' }}>{ex.subjects?.name || 'No subject'}</p>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <Link to={`/admin/exams/${ex.id}`}><button className="btn-secondary">Edit</button></Link>
+              <button className="btn-danger" onClick={() => handleDelete(ex.id)}>Delete</button>
+            </div>
           </div>
-          <div>
-            <Link to={`/admin/exams/${ex.id}`}><button>Edit</button></Link>
-            <button onClick={() => handleDelete(ex.id)} style={{ marginLeft: 8 }}>Delete</button>
-          </div>
-        </div>
-      ))}
-      {exams.length === 0 && <p>No exams yet.</p>}
+        ))}
+        {exams.length === 0 && <p className="muted">No exams yet.</p>}
+      </div>
     </div>
   )
 }
-
-const inputStyle = { display: 'block', width: '100%', padding: 8, marginBottom: 10 }

@@ -10,21 +10,32 @@ import ExamEditor from './pages/admin/ExamEditor'
 import ExamList from './pages/exams/ExamList'
 import TakeExam from './pages/exams/TakeExam'
 import ExamResult from './pages/exams/ExamResult'
+import Navbar from './components/Navbar'
 import { useAuth } from './hooks/useAuth'
 
 function ProtectedRoute({ children }) {
   const { session, loading } = useAuth()
-  if (loading) return <p>Loading...</p>
+  if (loading) return <div className="page"><p>Loading...</p></div>
   if (!session) return <Navigate to="/login" replace />
-  return children
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  )
 }
 
 function AdminRoute({ children }) {
   const { session, loading, isAdmin } = useAuth()
-  if (loading) return <p>Loading...</p>
+  if (loading) return <div className="page"><p>Loading...</p></div>
   if (!session) return <Navigate to="/login" replace />
   if (!isAdmin) return <Navigate to="/dashboard" replace />
-  return children
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  )
 }
 
 export default function App() {

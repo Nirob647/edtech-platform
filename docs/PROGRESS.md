@@ -15,7 +15,8 @@ Read this file first in any new session. Then read DECISIONS.md.
 - [x] RLS policies (part of 0001_core.sql)
 - [x] Exam attempt flow (student) — server-side expires_at, resume-on-refresh, auto-submit on timeout
 - [x] Auto-evaluation + results — CLIENT-SIDE grading (see known limitation in DECISIONS.md)
-- [x] Student dashboard: exam list (available/in-progress/completed), take exam, view result
+- [x] Student dashboard: exam list (available/in-progress/completed), take exam, view result — TESTED WORKING LIVE
+- [x] MVP COMPLETE — full loop confirmed: register → login → admin builds subject/question/exam → student takes exam → gets result
 - [ ] Basic export/backup script
 - [ ] Phase: AI (PDF extract, MCQ gen, translation, review queue)
 - [ ] Phase: Courses/Books/Notifications

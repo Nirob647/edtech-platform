@@ -27,13 +27,12 @@ export default function ExamList() {
     load()
   }, [])
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return <div className="page"><p>Loading…</p></div>
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'sans-serif' }}>
-      <p><Link to="/dashboard">&larr; Dashboard</Link></p>
-      <h2>Available Exams</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="page">
+      <h1>Exams</h1>
+      {error && <p className="error-text">{error}</p>}
 
       {exams.map(ex => {
         const attempts = attemptsByExam[ex.id] || []
@@ -42,27 +41,35 @@ export default function ExamList() {
         const canRetake = ex.retake_allowed || !submitted
 
         return (
-          <div key={ex.id} style={{ border: '1px solid #ddd', padding: 14, marginBottom: 10 }}>
-            <strong>{ex.title}</strong>
-            <p style={{ margin: '4px 0', color: '#666', fontSize: 13 }}>{ex.subjects?.name}</p>
-            {ex.description && <p style={{ fontSize: 14 }}>{ex.description}</p>}
-            <p style={{ fontSize: 13, color: '#666' }}>
-              {ex.duration_enabled ? `${ex.duration_minutes} min` : 'No time limit'}
+          <div key={ex.id} className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h3 style={{ marginBottom: 4 }}>{ex.title}</h3>
+                <p className="muted">{ex.subjects?.name}</p>
+              </div>
+              {submitted && <span className="seal seal-published">Submitted</span>}
+              {inProgress && <span className="seal seal-draft">In progress</span>}
+            </div>
+            {ex.description && <p>{ex.description}</p>}
+            <p className="muted">
+              {ex.duration_enabled ? `${ex.duration_minutes ?? '?'} min` : 'No time limit'}
               {ex.negative_marking_enabled && ' · Negative marking'}
             </p>
 
-            {inProgress && <Link to={`/exams/${ex.id}/take`}><button>Resume Attempt</button></Link>}
-            {!inProgress && submitted && (
-              <>
-                <Link to={`/exams/${ex.id}/result/${submitted.id}`}><button>View Result</button></Link>
-                {canRetake && <Link to={`/exams/${ex.id}/take`}><button style={{ marginLeft: 8 }}>Retake</button></Link>}
-              </>
-            )}
-            {!inProgress && !submitted && <Link to={`/exams/${ex.id}/take`}><button>Start Exam</button></Link>}
+            <div style={{ marginTop: 10 }}>
+              {inProgress && <Link to={`/exams/${ex.id}/take`}><button>Resume Attempt</button></Link>}
+              {!inProgress && submitted && (
+                <>
+                  <Link to={`/exams/${ex.id}/result/${submitted.id}`}><button>View Result</button></Link>
+                  {canRetake && <Link to={`/exams/${ex.id}/take`}><button className="btn-secondary" style={{ marginLeft: 8 }}>Retake</button></Link>}
+                </>
+              )}
+              {!inProgress && !submitted && <Link to={`/exams/${ex.id}/take`}><button>Start Exam</button></Link>}
+            </div>
           </div>
         )
       })}
-      {exams.length === 0 && <p>No exams available right now.</p>}
+      {exams.length === 0 && <div className="card"><p className="muted">No exams available right now — check back soon.</p></div>}
     </div>
   )
 }
