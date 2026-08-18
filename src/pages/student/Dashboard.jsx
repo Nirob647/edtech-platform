@@ -17,6 +17,12 @@ export default function Dashboard() {
         <Link to="/exams"><button>View Exams</button></Link>
       </div>
 
+      <div className="card">
+        <h3>{isAdmin ? 'Student Performance' : 'My Performance'}</h3>
+        <p>{isAdmin ? "See overall results across all students, and drill into any individual student's history." : "Track your scores over time and see how you're doing by subject."}</p>
+        <Link to={isAdmin ? '/admin/performance' : '/performance'}><button className="btn-secondary">View Performance</button></Link>
+      </div>
+
       {isAdmin && (
         <div className="card">
           <h3>Admin</h3>

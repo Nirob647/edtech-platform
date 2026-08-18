@@ -20,6 +20,7 @@ export default function Navbar() {
       <div className="topnav-right">
         {isAdmin && <Link to="/admin">Admin</Link>}
         <Link to="/exams">Exams</Link>
+        <Link to={isAdmin ? '/admin/performance' : '/performance'}>Performance</Link>
         {profile && <span className="role-pill">{profile.role}</span>}
         <button onClick={handleLogout} className="btn-ghost" style={{ color: 'white' }}>Logout</button>
       </div>

@@ -17,6 +17,11 @@ Read this file first in any new session. Then read DECISIONS.md.
 - [x] Auto-evaluation + results — CLIENT-SIDE grading (see known limitation in DECISIONS.md)
 - [x] Student dashboard: exam list (available/in-progress/completed), take exam, view result — TESTED WORKING LIVE
 - [x] MVP COMPLETE — full loop confirmed: register → login → admin builds subject/question/exam → student takes exam → gets result
+- [x] UI design system applied ("exam hall" theme: OMR bubble options, seal badges, exam clock) — tested live
+- [x] Add-question-from-exam-page (create new question inline while building an exam) — tested working, supports rapid multi-add
+- [x] CSV/Google Sheet bulk question import — tested working
+- [x] Exam editor: bulk-select existing questions via checkboxes
+- [ ] Basic export/backup script (download all data as JSON/CSV) — requested by user, deferred for later
 - [ ] Basic export/backup script
 - [ ] Phase: AI (PDF extract, MCQ gen, translation, review queue)
 - [ ] Phase: Courses/Books/Notifications

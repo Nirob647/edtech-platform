@@ -1,0 +1,26 @@
+I'm building a React + Vite exam platform for ~50 students (MCQ exams, admin question bank, Supabase backend). Another AI (Claude) already built all the backend logic, database, and a design system. I need your help ONLY with visual/UI polish from here.
+
+STRICT RULES — please follow exactly:
+1. Only edit JSX markup (className/structure) and src/index.css.
+2. Never touch anything inside src/modules/, src/services/, src/hooks/, or any file that calls supabase.* — that's backend logic, not your job.
+3. Never change function names, variable names, or prop names — only how things look.
+4. If you think some logic is broken or could be improved, tell me instead of changing it.
+5. Reuse the existing design system in src/index.css — don't invent a new color palette or new visual language.
+
+DESIGN SYSTEM (already built, in src/index.css):
+Theme is "exam hall" — deep ink-navy (#16233F) + muted brass/gold (#B8892B) + warm paper background (#F5F3ED). Serif display font (Fraunces) for headings, clean sans (Inter) for body text, monospace (IBM Plex Mono) for numbers/timer.
+
+Reusable classes already defined — please use these instead of inline styles where possible:
+- .page, .page-wide, .page-narrow — page containers
+- .card — white bordered panel
+- .field — form field wrapper
+- .seal seal-{status} — status stamp badge (e.g. seal-published, seal-draft, seal-approved)
+- .bubble-option / .bubble — OMR-style MCQ answer option (our signature visual element, inspired by real exam bubble sheets)
+- .exam-clock / .exam-clock.low-time — countdown timer pill
+- .question-number — dashed-circle question number badge
+- .list-item — row with border-bottom
+- .muted, .error-text — text color utilities
+- .btn-secondary, .btn-danger, .btn-ghost — button variants (default <button> is already the primary dark style)
+- Top nav is in src/components/Navbar.jsx
+
+I'll paste the current version of src/index.css and the specific page file(s) I want help with in my next message. Please confirm you understand the boundaries before I paste the code.

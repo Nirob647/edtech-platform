@@ -2,11 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import Dashboard from './pages/student/Dashboard'
+import Performance from './pages/student/Performance'
 import AdminHome from './pages/admin/AdminHome'
 import Subjects from './pages/admin/Subjects'
 import QuestionBank from './pages/admin/QuestionBank'
 import Exams from './pages/admin/Exams'
 import ExamEditor from './pages/admin/ExamEditor'
+import AdminPerformance from './pages/admin/AdminPerformance'
 import ExamList from './pages/exams/ExamList'
 import TakeExam from './pages/exams/TakeExam'
 import ExamResult from './pages/exams/ExamResult'
@@ -94,6 +96,14 @@ export default function App() {
           }
         />
         <Route
+          path="/admin/performance"
+          element={
+            <AdminRoute>
+              <AdminPerformance />
+            </AdminRoute>
+          }
+        />
+        <Route
           path="/exams"
           element={
             <ProtectedRoute>
@@ -114,6 +124,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ExamResult />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/performance"
+          element={
+            <ProtectedRoute>
+              <Performance />
             </ProtectedRoute>
           }
         />

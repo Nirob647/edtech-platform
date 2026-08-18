@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { listSubjects } from '../../modules/questions/subjectsService'
 import { listTopicsBySubject, createTopic } from '../../modules/questions/topicsService'
-import { listQuestions, createQuestion, updateQuestionStatus, deleteQuestion } from '../../modules/questions/questionsService'
+import { listQuestions, createQuestion, updateQuestionStatus, deleteQuestion, bulkImportQuestions } from '../../modules/questions/questionsService'
+import { parseCSV, downloadCSVTemplate } from '../../utils/csv'
 
 const emptyOptions = [
   { label: 'A', text: '', isCorrect: true },
@@ -24,6 +25,9 @@ export default function QuestionBank() {
   const [explanation, setExplanation] = useState('')
   const [difficulty, setDifficulty] = useState('medium')
   const [options, setOptions] = useState(emptyOptions)
+
+  const [importSummary, setImportSummary] = useState(null)
+  const [importing, setImporting] = useState(false)
 
   useEffect(() => { listSubjects().then(setSubjects).catch(e => setError(e.message)) }, [])
 
@@ -83,6 +87,31 @@ export default function QuestionBank() {
     catch (err) { setError(err.message) }
   }
 
+  async function handleFileSelected(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setImportSummary(null)
+    setError('')
+    setImporting(true)
+    try {
+      const text = await file.text()
+      const rows = parseCSV(text)
+      if (rows.length === 0) {
+        setError('No rows found in that CSV. Check it has a header row and at least one question.')
+        setImporting(false)
+        return
+      }
+      const results = await bulkImportQuestions({ subjectId, topicId: topicId || null, rows })
+      setImportSummary(results)
+      refreshQuestions()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setImporting(false)
+      e.target.value = '' // allow re-selecting the same file
+    }
+  }
+
   return (
     <div className="page page-wide">
       <h1>Question Bank</h1>
@@ -113,6 +142,35 @@ export default function QuestionBank() {
       </div>
 
       {error && <p className="error-text">{error}</p>}
+
+      {subjectId && (
+        <div className="card">
+          <h3>Bulk import from CSV</h3>
+          <p className="muted">
+            Have questions in Google Sheets? File &rarr; Download &rarr; Comma Separated Values (.csv), then upload it here.
+            Columns needed: <code>question, option_a, option_b, option_c, option_d, correct_answer</code> (A/B/C/D), plus optional <code>explanation, difficulty</code>.
+          </p>
+          <button type="button" className="btn-secondary" onClick={downloadCSVTemplate}>Download CSV template</button>
+          <div style={{ marginTop: 10 }}>
+            <input type="file" accept=".csv,text/csv" onChange={handleFileSelected} disabled={importing} />
+          </div>
+          {importing && <p className="muted">Importing…</p>}
+          {importSummary && (
+            <div style={{ marginTop: 10 }}>
+              <p>
+                <span className="seal seal-approved">{importSummary.created} imported</span>
+                {importSummary.failed.length > 0 && <span className="seal seal-draft" style={{ marginLeft: 8 }}>{importSummary.failed.length} skipped</span>}
+              </p>
+              {importSummary.failed.length > 0 && (
+                <ul className="muted" style={{ fontSize: 13 }}>
+                  {importSummary.failed.map((f, i) => <li key={i}>Row {f.row}: {f.reason}</li>)}
+                </ul>
+              )}
+              <p className="muted">Imported questions are added as Draft — review and publish them below.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {subjectId && (
         <div className="card">

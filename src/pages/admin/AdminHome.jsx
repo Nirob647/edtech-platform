@@ -21,6 +21,11 @@ export default function AdminHome() {
         <p>Build exams from published questions, configure rules, and publish for students.</p>
         <Link to="/admin/exams"><button>Manage Exams</button></Link>
       </div>
+      <div className="card">
+        <h3>Student Performance</h3>
+        <p>See overall results across all students, and drill into any individual student's history.</p>
+        <Link to="/admin/performance"><button>View Performance</button></Link>
+      </div>
     </div>
   )
 }

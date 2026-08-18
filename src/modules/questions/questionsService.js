@@ -58,3 +58,47 @@ export async function deleteQuestion(id) {
   const { error } = await supabase.from('questions').delete().eq('id', id)
   if (error) throw error
 }
+
+// Bulk import from parsed CSV rows. Expected keys (case-insensitive, from header row):
+// question, option_a, option_b, option_c, option_d, correct_answer (A/B/C/D), explanation, difficulty
+export async function bulkImportQuestions({ subjectId, topicId, rows }) {
+  const results = { created: 0, failed: [] }
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]
+    try {
+      const questionText = r.question
+      const optA = r.option_a
+      const optB = r.option_b
+      const optC = r.option_c
+      const optD = r.option_d
+      const correctLetter = (r.correct_answer || '').trim().toUpperCase()
+
+      if (!questionText || !optA || !optB || !optC || !optD) {
+        throw new Error('Missing required field (question or one of the 4 options)')
+      }
+      if (!['A', 'B', 'C', 'D'].includes(correctLetter)) {
+        throw new Error(`correct_answer must be A, B, C, or D (got "${r.correct_answer}")`)
+      }
+
+      const options = [
+        { label: 'A', text: optA, isCorrect: correctLetter === 'A' },
+        { label: 'B', text: optB, isCorrect: correctLetter === 'B' },
+        { label: 'C', text: optC, isCorrect: correctLetter === 'C' },
+        { label: 'D', text: optD, isCorrect: correctLetter === 'D' },
+      ]
+
+      await createQuestion({
+        subjectId,
+        topicId: topicId || null,
+        questionText,
+        explanation: r.explanation || '',
+        difficulty: ['easy', 'medium', 'hard'].includes((r.difficulty || '').toLowerCase()) ? r.difficulty.toLowerCase() : 'medium',
+        options,
+      })
+      results.created++
+    } catch (err) {
+      results.failed.push({ row: i + 2, reason: err.message }) // +2: header row + 1-indexed
+    }
+  }
+  return results
+}
